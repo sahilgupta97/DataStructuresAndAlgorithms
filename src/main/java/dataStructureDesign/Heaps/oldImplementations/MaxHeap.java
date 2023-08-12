@@ -1,4 +1,4 @@
-package Heaps.design;
+package dataStructureDesign.Heaps.oldImplementations;
 
 public class MaxHeap extends Heap{
     public MaxHeap(int capacity) {

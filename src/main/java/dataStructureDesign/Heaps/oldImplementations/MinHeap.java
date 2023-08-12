@@ -1,4 +1,4 @@
-package Heaps.design;
+package dataStructureDesign.Heaps.oldImplementations;
 
 public class MinHeap extends Heap {
     public MinHeap(int capacity) {

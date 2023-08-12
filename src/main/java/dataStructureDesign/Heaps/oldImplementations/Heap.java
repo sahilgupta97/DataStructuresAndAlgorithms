@@ -1,4 +1,4 @@
-package Heaps.design;
+package dataStructureDesign.Heaps.oldImplementations;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
@@ -6,8 +6,7 @@ import java.util.NoSuchElementException;
 public abstract class Heap {
     /**
      *      Array data structure to hold the elements. Perfect candidate as heap is a complete binary tree.
-     *     Hence, we can map child and parent using indexing. ArrayList can be used to get the ensure capacity
-     *     functionality out of the box but then removal i.e. poll will cost us O(N) Time.
+     *     Hence, we can map child and parent using indexing.
      */
     int[] heap;
 
