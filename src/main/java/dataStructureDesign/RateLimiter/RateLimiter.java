@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Uses concurrent hashmap and reentrant lock (avoiding synchronized due to its inability to work real scale
- * multithreaded applications), taking lock on user level.
+ * Uses concurrent hashmap and reentrant lock (avoiding synchronized due to its inability to work on real
+ * scale multithreaded applications), taking lock on user level.
  */
 public class RateLimiter {
 
@@ -57,9 +57,10 @@ public class RateLimiter {
 
   private static class RateCounter {
 
+    // Sliding window with counters to improve memory usage
     private final Deque<RequestInfo> deque;
     private int totalHits;
-    private final ReentrantLock lock;
+    private final ReentrantLock windowLock;
 
     private final int RATE_LIMIT;
     private final long TIME_LIMIT_MILLIS;
@@ -67,14 +68,14 @@ public class RateLimiter {
     public RateCounter(int rateLimit, long timeLimitMillis) {
       this.deque = new ArrayDeque<>();
       this.totalHits = 0;
-      this.lock = new ReentrantLock();
+      this.windowLock = new ReentrantLock();
 
       this.RATE_LIMIT = rateLimit;
       this.TIME_LIMIT_MILLIS = timeLimitMillis;
     }
 
     public boolean hit(Instant timestamp) {
-      lock.lock();
+      windowLock.lock();
       try {
         removeStaleEntries(timestamp);
 
@@ -85,7 +86,7 @@ public class RateLimiter {
 
         return false;
       } finally {
-        lock.unlock();
+        windowLock.unlock();
       }
     }
 
@@ -93,7 +94,7 @@ public class RateLimiter {
       while (!deque.isEmpty()) {
         RequestInfo oldestEntry = deque.peekLast();
         Duration durationGap = Duration.between(oldestEntry.getTimestamp(), timestamp);
-        if (durationGap.toMillis() > TIME_LIMIT_MILLIS) {
+        if (durationGap.toMillis() >= TIME_LIMIT_MILLIS) {
           deque.pollLast();
           totalHits -= oldestEntry.counter;
         } else {
@@ -104,7 +105,7 @@ public class RateLimiter {
 
     private void addEntry(Instant timestamp) {
       RequestInfo requestInfo;
-      if (deque.isEmpty() || (deque.peekFirst().getTimestamp().equals(timestamp))) {
+      if (deque.isEmpty() || (!deque.peekFirst().getTimestamp().equals(timestamp))) {
         requestInfo = new RequestInfo(1, timestamp);
       } else {
         requestInfo = deque.pollFirst();
