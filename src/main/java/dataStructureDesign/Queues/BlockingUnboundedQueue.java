@@ -26,8 +26,9 @@ public class BlockingUnboundedQueue<T> {
     offerLock.lock();
 
     try {
+//      System.out.println("Offering : " + item.toString());
       queue.offer(item);
-      notEmptyCondition.signalAll();
+      signalNotEmpty();
     } finally {
       offerLock.unlock();
     }
@@ -42,6 +43,7 @@ public class BlockingUnboundedQueue<T> {
       while (queue.isEmpty()) {
         notEmptyCondition.await();
       }
+//      System.out.println("Polling");
       return queue.poll();
     } finally {
       pollLock.unlock();
@@ -57,13 +59,22 @@ public class BlockingUnboundedQueue<T> {
     }
   }
 
-  void fullyLock() {
+  private void fullyLock() {
     offerLock.lock();
     pollLock.lock();
   }
 
-  void fullyUnlock() {
+  private void fullyUnlock() {
     offerLock.unlock();
     pollLock.unlock();
+  }
+
+  private void signalNotEmpty() {
+    pollLock.lock();
+    try {
+      notEmptyCondition.signalAll();
+    } finally {
+      pollLock.unlock();
+    }
   }
 }
