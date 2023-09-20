@@ -5,8 +5,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class TrieBackedAutocomplete implements AutocompleteSystem{
+public class TrieBackedAutocomplete implements AutocompleteSystem {
+
   private final TrieNode root;
   private final int suggestionLimit;
   private TrieNode inputStreamNode;
@@ -31,7 +33,7 @@ public class TrieBackedAutocomplete implements AutocompleteSystem{
     this.inputStreamNode = this.root;
     this.inputStreamBuilder = new StringBuilder();
 
-    for(int idx = 0; idx < searchTerms.length; idx++) {
+    for (int idx = 0; idx < searchTerms.length; idx++) {
       String searchTerm = searchTerms[idx];
       int frequency = frequencies[idx];
 
@@ -44,7 +46,7 @@ public class TrieBackedAutocomplete implements AutocompleteSystem{
     TrieNode currentNode = root;
     List<TrieNode> visitedNodes = new ArrayList<>();
 
-    for(int idx = 0; idx < searchTerm.length(); idx++) {
+    for (int idx = 0; idx < searchTerm.length(); idx++) {
       char currentChar = searchTerm.charAt(idx);
       currentNode = currentNode.getChildren().computeIfAbsent(currentChar, n -> new TrieNode());
       visitedNodes.add(currentNode);
@@ -59,24 +61,60 @@ public class TrieBackedAutocomplete implements AutocompleteSystem{
   }
 
   private void enrichVisitedNodes(List<TrieNode> visitedNodes, TrieNode currentNode, int suggestionLimit) {
-    for(TrieNode visitedNode : visitedNodes) {
+    for (TrieNode visitedNode : visitedNodes) {
       visitedNode.rebalanceTopSearchTerms(currentNode, suggestionLimit);
     }
   }
 
   @Override
   public List<String> getAutocompleteSuggestions(String prefix) {
-    return null;
+    TrieNode currentNode = root;
+
+    for (int idx = 0; idx < prefix.length(); idx++) {
+      char currentChar = prefix.charAt(idx);
+      TrieNode node = currentNode.getChildren().getOrDefault(currentChar, null);
+      if (node == null) {
+        return new ArrayList<>();
+      }
+      currentNode = node;
+    }
+
+    List<TrieNode> topNodes = currentNode.getTopSearchTerms();
+    List<String> topSearchTerms = topNodes.stream().map(TrieNode::getTerm).collect(Collectors.toList());
+
+    return topSearchTerms;
   }
 
   @Override
   public List<String> inputCharacter(char ch) {
-    return null;
+    List<String> topSuggestions = new ArrayList<>();
+
+    if (ch == END_SYMBOL) {
+      String searchTerm = inputStreamBuilder.toString();
+      addSearchTerm(searchTerm, 1);
+      inputStreamBuilder = new StringBuilder();
+      inputStreamNode = root;
+      return getAutocompleteSuggestions(searchTerm);
+    }
+
+    if (inputStreamNode != null) {
+      inputStreamNode = inputStreamNode.children.getOrDefault(ch, null);
+    }
+
+    if (inputStreamNode == null) {
+      return topSuggestions;
+    }
+
+    List<TrieNode> topSuggestionNodes = inputStreamNode.getTopSearchTerms();
+    topSuggestions = topSuggestionNodes.stream().map(TrieNode::getTerm).collect(Collectors.toList());
+
+    return topSuggestions;
   }
 
   private static class TrieNode implements Comparable<TrieNode> {
-    private Map<Character, TrieNode> children;
-    private List<TrieNode> topSearchTerms;
+
+    private final Map<Character, TrieNode> children;
+    private final List<TrieNode> topSearchTerms;
     private int count;
     private String term;
     private boolean endOfTerm;
@@ -112,20 +150,24 @@ public class TrieBackedAutocomplete implements AutocompleteSystem{
       this.term = term;
     }
 
+    public List<TrieNode> getTopSearchTerms() {
+      return this.topSearchTerms;
+    }
+
     public void rebalanceTopSearchTerms(TrieNode currentNode, int suggestionLimit) {
-      if(!this.topSearchTerms.contains(currentNode)) {
+      if (!this.topSearchTerms.contains(currentNode)) {
         this.topSearchTerms.add(currentNode);
       }
 
       Collections.sort(this.topSearchTerms);
-      if(this.topSearchTerms.size() > suggestionLimit) {
+      if (this.topSearchTerms.size() > suggestionLimit) {
         this.topSearchTerms.remove(this.topSearchTerms.size() - 1);
       }
     }
 
     @Override
     public int compareTo(TrieNode otherNode) {
-      if(this.count == otherNode.count) {
+      if (this.count == otherNode.count) {
         return this.getTerm().compareTo(otherNode.getTerm());
       }
       return otherNode.count - this.count;

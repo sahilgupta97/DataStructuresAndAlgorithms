@@ -5,6 +5,7 @@ import java.util.List;
 public interface AutocompleteSystem {
 
   int DEFAULT_SUGGESTION_LIMIT = 5;
+  char END_SYMBOL = '#';
 
   boolean addSearchTerm(String searchTerm, int frequency);
 
