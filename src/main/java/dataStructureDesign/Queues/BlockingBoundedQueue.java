@@ -72,13 +72,6 @@ public class BlockingBoundedQueue<T> {
   }
 }
 
-//package dataStructureDesign.Queues;
-//
-//import java.util.LinkedList;
-//import java.util.Queue;
-//import java.util.concurrent.locks.Condition;
-//import java.util.concurrent.locks.ReentrantLock;
-
 /*
 TWO WAY LOCKING APPROACH
 
