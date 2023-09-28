@@ -6,6 +6,7 @@
 *   These concurrent requests are throttled with milliseconds precision.
 
 ### Following info :
+```
 * 2023-09-11T08:32:29.931642Z Thread 21: Rate Limit Exceeded for Request: Request{userId='user1', requestTimestamp=2023-09-11T08:32:29.931642Z}
 * 2023-09-11T08:32:29.931630Z Thread 24: Processing Request : Request{userId='user1', requestTimestamp=2023-09-11T08:32:29.931630Z}
 * 2023-09-11T08:32:29.931617Z Thread 23: Processing Request : Request{userId='user1', requestTimestamp=2023-09-11T08:32:29.931617Z}
@@ -94,4 +95,4 @@
 * 2023-09-11T08:32:47.075159Z Thread 25: Processing Request : Request{userId='user1', requestTimestamp=2023-09-11T08:32:47.075159Z}
 * 2023-09-11T08:32:47.075159Z Thread 22: Processing Request : Request{userId='user1', requestTimestamp=2023-09-11T08:32:47.075159Z}
 * 2023-09-11T08:32:47.075159Z Thread 24: Processing Request : Request{userId='user1', requestTimestamp=2023-09-11T08:32:47.075159Z}
-*/
+```
