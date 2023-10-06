@@ -45,6 +45,9 @@ public class HashMap<K, V> {
   private void resize() {
     LinkedList<HashMapNode<K, V>>[] oldBuckets = buckets;
     buckets = new LinkedList[oldBuckets.length * 2];
+    for(int idx = 0; idx < buckets.length; idx++) {
+      buckets[idx] = new LinkedList<>();
+    }
     size = 0;
 
     for (LinkedList<HashMapNode<K, V>> bucket : oldBuckets) {
