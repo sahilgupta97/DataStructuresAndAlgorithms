@@ -8,6 +8,7 @@ public class RollingHash_RabinKarp {
    * Suppose we want to find the length of longest repeating substring in a given string.
    * */
   public int longestRepeatingSubstring(String s) {
+    // For this problem, Overall TIME : O(Nlogn) SPACE : O(N) but for only rabin karp it takes O(s + p) where s and p are lengths of string and pattern.
     int n = s.length();
     int minLength = 0, maxLength = n - 1;
     int result = 0;
