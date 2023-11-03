@@ -30,7 +30,7 @@ public class RollingHash_RabinKarp {
 
   /**
    * ROLLING HASH
-   *    Multiplier also plays an important part in rollong hash which actually denoted the ordering of the characters in the string.
+   *    Multiplier also plays an important part in rolling hash which actually denoted the ordering of the characters in the string.
    *    Ideally we prefer picking the multiplier value to be equal or greater than the largest value in our string so that there are no hash collisions.
    *    In case of lowercase alphabets, we can use 26 as the multiplier.
    *
