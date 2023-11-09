@@ -3,6 +3,11 @@ package dataStructureDesign.RollingHash;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ *
+ * ▂▂▂▂⌇   ROLLING HASH    ▂▂▂▂⌇
+ *
+ * */
 public class RollingHash_RabinKarp {
   /**
    * Suppose we want to find the length of longest repeating substring in a given string.
@@ -29,7 +34,7 @@ public class RollingHash_RabinKarp {
   }
 
   /**
-   * ROLLING HASH
+   *    ▂▂▂▂⌇   ROLLING HASH IMPL   ▂▂▂▂⌇
    *    Multiplier also plays an important part in rolling hash which actually denoted the ordering of the characters in the string.
    *    Ideally we prefer picking the multiplier value to be equal or greater than the largest value in our string so that there are no hash collisions.
    *    In case of lowercase alphabets, we can use 26 as the multiplier.
@@ -41,7 +46,7 @@ public class RollingHash_RabinKarp {
    *    i.e.     (prevHash - 1*10^3)*10 + newChar
    */
   public static final long MULTIPLIER = 26;
-  public static final long MOD = 1000000007; // (greater the mod, lesser the chances of collision in rolling hash)
+  public static final long MOD = 1000_000_000_007L; // (greater the mod, lesser the chances of collision in rolling hash)
   private boolean findRepeatingSubstringOfLength(int l, String s) {
     // TIME : O(N)  SPACE : O(N)
     if(l >= s.length()) {
