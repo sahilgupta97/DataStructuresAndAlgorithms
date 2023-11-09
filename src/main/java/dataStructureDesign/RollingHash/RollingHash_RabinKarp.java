@@ -50,7 +50,7 @@ public class RollingHash_RabinKarp {
   private boolean findRepeatingSubstringOfLength(int l, String s) {
     // TIME : O(N)  SPACE : O(N)
     if(l >= s.length()) {
-      // if no substring can be considered, we do need complete string because that will always be true.
+      // if no substring can be considered <|> we do not need complete string because that will always be true.
       return false;
     }
 
